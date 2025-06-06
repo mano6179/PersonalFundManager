@@ -1,4 +1,4 @@
-# Steady Gains 2025 - Trading Dashboard
+# Fund Manager
 
 A comprehensive web-based dashboard for managing a personal trading fund, featuring trade logging, NAV tracking, technical analysis, and economic calendar integration.
 
