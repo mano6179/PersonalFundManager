@@ -1,0 +1,20 @@
+Strategy,Leg 1,Leg 2,Leg 3,Leg 4
+Covered Call,Buy Stock,Sell Call,,
+Protective Put,Buy Stock,Buy Put,,
+Long Call,Buy Call,,,
+Long Put,Buy Put,,,
+Short Call,Sell Call,,,
+Short Put,Sell Put,,,
+Bull Call Spread,Buy Call (lower strike),Sell Call (higher strike),,
+Bear Put Spread,Buy Put (higher strike),Sell Put (lower strike),,
+Bull Put Spread,Sell Put (higher strike),Buy Put (lower strike),,
+Bear Call Spread,Sell Call (lower strike),Buy Call (higher strike),,
+Long Straddle,Buy Call (ATM),Buy Put (ATM),,
+Short Straddle,Sell Call (ATM),Sell Put (ATM),,
+Long Strangle,Buy Call (OTM),Buy Put (OTM),,
+Short Strangle,Sell Call (OTM),Sell Put (OTM),,
+Iron Condor,Buy Put (lowest strike),Sell Put (low-mid strike),Sell Call (high-mid strike),Buy Call (highest strike)
+Iron Butterfly,Buy Put (lower strike),Sell Put (ATM),Sell Call (ATM),Buy Call (higher strike)
+Calendar Spread,Buy Option (long expiry),Sell Option (short expiry),,
+Diagonal Spread,"Buy Option (long expiry, diff strike)","Sell Option (short expiry, diff strike)",,
+Collar,Buy Stock,Buy Put,Sell Call,

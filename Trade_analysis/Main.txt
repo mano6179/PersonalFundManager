@@ -1,0 +1,46 @@
+# main_script.py
+
+import pandas as pd
+from collections import deque
+
+# Import functions from each phase
+from phase1_data_preparation import run_phase1
+from phase2_entry_exit_matching import run_phase2
+from phase3_daily_positions import run_phase3
+from phase4_strategy_identification import run_phase4
+from phase5_export_reporting import run_phase5
+
+def main():
+    """
+    Runs all phases of the trade analysis workflow sequentially.
+    """
+    # --- Configuration ---
+    # Replace with the actual path to your trade CSV file
+    trade_file_path = '/content/drive/MyDrive/Trades /tradebook-KG2302-FO(last FY).csv'
+    # Replace with the desired output path for the annotated CSV
+    output_file_path = '/content/drive/MyDrive/Trades /tradebook-annotated.csv'
+    # --- End Configuration ---
+
+    # Phase 1: Data Preparation
+    df, fifo_queues, daily_open_positions_init = run_phase1(trade_file_path)
+
+    # Phase 2: Entry/Exit Matching
+    # Pass the DataFrame and the initialized fifo_queues
+    df = run_phase2(df, fifo_queues)
+
+    # Phase 3: Track Daily Active Positions
+    # Pass the DataFrame with annotations from Phase 2
+    daily_open_positions = run_phase3(df)
+
+    # Phase 4: Strategy Identification
+    # Pass the DataFrame with annotations and the daily open positions from Phase 3
+    df = run_phase4(df)
+
+    # Phase 5: Export and Reporting
+    # Pass the final DataFrame and the output file path
+    run_phase5(df, output_file_path)
+
+    print("\nWorkflow completed.")
+
+if __name__ == '__main__':
+    main()
