@@ -29,7 +29,7 @@ const ZerodhaConnect = () => {
     if (requestToken) {
       handleRequestToken(requestToken);
     }
-  }, []);
+  }, [handleRequestToken]);
 
   const handleRequestToken = async (requestToken) => {
     try {

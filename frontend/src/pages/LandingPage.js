@@ -14,7 +14,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import ShowChartIcon from '@mui/icons-material/ShowChart';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import MenuIcon from '@mui/icons-material/Menu';
 
 const LandingPage = () => {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -23,7 +22,6 @@ const LandingPage = () => {
   const [marketUpdates, setMarketUpdates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loginSliderOpen, setLoginSliderOpen] = useState(false);
 
   // Refs for scrolling to sections

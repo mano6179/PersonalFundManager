@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse, FileResponse
 from app.routers import nav_router, auth_router, zerodha_router, market_router
 import os
 
@@ -39,3 +40,11 @@ async def kite_callback(request_token: str, action: str = None, status: str = No
     if status == "success" and request_token:
         return RedirectResponse(url=f"/api/zerodha/callback?request_token={request_token}")
     return {"error": "Login failed"}
+
+# Mount static files directory
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/zerodha-trades")
+def zerodha_trades_page():
+    """Serve the Zerodha trades HTML page"""
+    return FileResponse("static/zerodha_trades.html")

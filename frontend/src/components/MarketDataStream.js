@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import useWebSocket from 'react-use-websocket';
 import { Box, Card, CardContent, Typography, Chip, Alert } from '@mui/material';
@@ -11,7 +11,7 @@ const MarketDataStream = () => {
 
     // WebSocket setup
     const WS_URL = 'ws://localhost:8000/api/market/ws/client1';
-    const { sendMessage, lastMessage, readyState } = useWebSocket(WS_URL, {
+    const { sendMessage, lastMessage } = useWebSocket(WS_URL, {
         onOpen: () => {
             console.log('WebSocket connection established');
             setIsConnected(true);
