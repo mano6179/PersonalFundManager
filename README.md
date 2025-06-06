@@ -1,6 +1,8 @@
-# Steady Gains 2025 - Trading Dashboard
+# Personal Trading Dashboard
 
 A comprehensive web-based dashboard for managing a personal trading fund, featuring trade logging, NAV tracking, technical analysis, and economic calendar integration.
+
+---
 
 ## Features
 
@@ -28,6 +30,35 @@ A comprehensive web-based dashboard for managing a personal trading fund, featur
   - Impact assessment
   - Calendar view
 
+---
+
+## Project Structure
+
+```
+PersonalFundManager/
+│
+├── main.py                # FastAPI backend entry point
+├── run_app.py             # Script to launch backend (Uvicorn)
+├── requirements.txt       # Python backend dependencies
+├── Procfile, runtime.txt  # Deployment configs (Heroku/Netlify)
+├── app/                   # Backend app code (routers, models, services)
+│   ├── routers/
+│   ├── models/
+│   ├── services/
+│   └── config/
+├── backend/               # Utility scripts (e.g., excel_upload.py)
+├── frontend/              # React frontend app
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       ├── context/
+│       └── pages/
+├── static/                # Static files (e.g., zerodha_trades.html)
+└── netlify/               # Netlify serverless functions (optional)
+```
+
+---
+
 ## Tech Stack
 
 - **Frontend**: React, Tailwind CSS, Chart.js
@@ -35,48 +66,58 @@ A comprehensive web-based dashboard for managing a personal trading fund, featur
 - **Database**: SQLite
 - **Market Data**: yfinance, TA-Lib
 
+---
+
 ## Setup Instructions
 
 ### Backend Setup
 
 1. Create a virtual environment:
-   ```bash
+   ```powershell
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   .\venv\Scripts\activate
    ```
 
 2. Install dependencies:
-   ```bash
+   ```powershell
    pip install -r requirements.txt
    ```
 
 3. Run the backend server:
-   ```bash
+   ```powershell
+   python run_app.py
+   ```
+   Or directly with Uvicorn:
+   ```powershell
    uvicorn main:app --reload
    ```
 
 ### Frontend Setup
 
 1. Navigate to the frontend directory:
-   ```bash
+   ```powershell
    cd frontend
    ```
 
 2. Install dependencies:
-   ```bash
+   ```powershell
    npm install
    ```
 
 3. Start the development server:
-   ```bash
+   ```powershell
    npm start
    ```
 
+---
+
 ## Usage
 
-1. Access the dashboard at `http://localhost:3000`
-2. Use the navigation menu to access different modules
-3. Dark mode toggle is available in the top-right corner
+- Access the dashboard at [http://localhost:3000](http://localhost:3000)
+- Use the navigation menu to access different modules
+- Dark mode toggle is available in the top-right corner
+
+---
 
 ## API Endpoints
 
@@ -88,7 +129,17 @@ A comprehensive web-based dashboard for managing a personal trading fund, featur
 - `GET /api/indicators/{symbol}` - Get technical indicators
 - `GET /api/events` - List all events
 - `POST /api/events` - Add a new event
+- `GET /zerodha-trades` - View Zerodha trades loader page
+
+---
+
+## Deployment
+
+- The project includes a `Procfile` and `runtime.txt` for deployment on platforms like Heroku.
+- For Netlify serverless functions, see the `netlify/functions/` directory.
+
+---
 
 ## License
 
-MIT 
+MIT
