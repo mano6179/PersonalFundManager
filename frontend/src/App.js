@@ -12,6 +12,7 @@ import NAVTrackerDetailed from './pages/NAVTrackerDetailed';
 import TradeLog from './pages/TradeLog';
 import Indicators from './pages/Indicators';
 import EconomicCalendar from './pages/EconomicCalendar';
+import ZerodhaPage from './pages/ZerodhaPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
@@ -92,6 +93,14 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <MarketUpdates />
+                </Layout>
+              </ProtectedRoute>
+            } />
+
+            <Route path="/zerodha" element={
+              <ProtectedRoute>
+                <Layout>
+                  <ZerodhaPage />
                 </Layout>
               </ProtectedRoute>
             } />

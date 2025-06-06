@@ -15,6 +15,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 
 // Navigation items with roles
 const navigation = [
@@ -27,6 +28,7 @@ const navigation = [
   { name: 'Public Market Updates', href: '/public/market-updates', icon: <ArticleIcon fontSize="small" />, roles: ['admin', 'investor'] },
   { name: 'Activity Logs', href: '/weekly-updates', icon: <ListAltIcon fontSize="small" />, roles: ['admin'] },
   { name: 'Market Updates', href: '/market-updates', icon: <ArticleIcon fontSize="small" />, roles: ['admin', 'investor'] },
+  { name: 'Zerodha', href: '/zerodha', icon: <AccountBalanceIcon fontSize="small" />, roles: ['admin', 'investor'] },
 ];
 
 function Layout({ children }) {

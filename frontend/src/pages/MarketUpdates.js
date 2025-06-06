@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Card } from '../components/FormElements';
+import MarketDataStream from '../components/MarketDataStream';
 
 const MarketUpdates = () => {
   const { isDarkMode } = useTheme();
@@ -130,7 +131,15 @@ const MarketUpdates = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className={`p-4 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+      <h1 className="text-2xl font-bold mb-4">Market Updates</h1>
+      
+      {/* Real-time Market Data */}
+      <div className="mb-6">
+        <MarketDataStream />
+      </div>
+
+      {/* Market Updates List */}
       <Card title="Market Updates">
         {loading ? (
           <div className={`text-center py-4 ${isDarkMode ? 'text-white' : 'text-neutral-DEFAULT'}`}>

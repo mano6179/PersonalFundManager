@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zerodha Trade Loader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .login-button {
+            background-color: #2196F3;
+        }
+        .login-button:hover {
+            background-color: #0b7dda;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Zerodha Trade Loader</h1>
+    
+    <div class="container">
+        <h2>Load Trades from Zerodha</h2>
+        <p>Click the button below to login to Zerodha and load your trades.</p>
+        <button id="loginButton" class="login-button">Login to Zerodha</button>
+        <button id="loadTradesButton">Load Trades</button>
+        <div id="loadMessage" class="message"></div>
+    </div>
+    
+    <div class="container">
+        <h2>Stored Trades</h2>
+        <button id="viewTradesButton">View Stored Trades</button>
+        <div id="tradesContainer"></div>
+    </div>
+    
+    <script>
+        // Base URL for API calls
+        const apiBaseUrl = 'http://localhost:8000';
+        
+        // Login to Zerodha
+        document.getElementById('loginButton').addEventListener('click', function() {
+            window.location.href = `${apiBaseUrl}/api/zerodha/login`;
+        });
+        
+        // Load trades from Zerodha
+        document.getElementById('loadTradesButton').addEventListener('click', async function() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/zerodha/load-trades`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                const messageElement = document.getElementById('loadMessage');
+                messageElement.textContent = data.message;
+                messageElement.className = data.success ? 'message success' : 'message error';
+            } catch (error) {
+                console.error('Error loading trades:', error);
+                const messageElement = document.getElementById('loadMessage');
+                messageElement.textContent = 'Error loading trades. Please try again.';
+                messageElement.className = 'message error';
+            }
+        });
+        
+        // View stored trades
+        document.getElementById('viewTradesButton').addEventListener('click', async function() {
+            try {
+                const response = await fetch(`${apiBaseUrl}/api/zerodha/stored-trades`);
+                const data = await response.json();
+                
+                const tradesContainer = document.getElementById('tradesContainer');
+                
+                if (!data.trades || data.trades.length === 0) {
+                    tradesContainer.innerHTML = '<p>No trades found.</p>';
+                    return;
+                }
+                
+                // Create table
+                let tableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Trade ID</th>
+                                <th>Order ID</th>
+                                <th>Symbol</th>
+                                <th>Exchange</th>
+                                <th>Transaction Type</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                // Add rows
+                data.trades.forEach(trade => {
+                    tableHtml += `
+                        <tr>
+                            <td>${trade.trade_id || '-'}</td>
+                            <td>${trade.order_id || '-'}</td>
+                            <td>${trade.tradingsymbol || '-'}</td>
+                            <td>${trade.exchange || '-'}</td>
+                            <td>${trade.transaction_type || '-'}</td>
+                            <td>${trade.quantity || '-'}</td>
+                            <td>${trade.average_price || '-'}</td>
+                            <td>${trade.fill_timestamp || '-'}</td>
+                        </tr>
+                    `;
+                });
+                
+                tableHtml += `
+                        </tbody>
+                    </table>
+                `;
+                
+                tradesContainer.innerHTML = tableHtml;
+            } catch (error) {
+                console.error('Error viewing trades:', error);
+                const tradesContainer = document.getElementById('tradesContainer');
+                tradesContainer.innerHTML = '<p class="error">Error loading stored trades. Please try again.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
