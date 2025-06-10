@@ -3,13 +3,20 @@ from pymongo.server_api import ServerApi
 import asyncio
 from datetime import datetime
 import logging
+import os
+from dotenv import load_dotenv
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Load environment variables
+load_dotenv()
+
 # MongoDB connection string
-MONGODB_URL = "mongodb+srv://manoharmeesala6179:xw9momNJ0YaAocFF@personalfundmanager.y4hlu4o.mongodb.net/?retryWrites=true&w=majority&appName=PersonalFundManager"
+MONGODB_URL = os.getenv("MONGODB_URL")
+if not MONGODB_URL:
+    raise ValueError("MONGODB_URL environment variable is not set")
 
 # Mock NAV data to be migrated
 mock_nav_data = [

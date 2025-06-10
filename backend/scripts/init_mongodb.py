@@ -4,9 +4,15 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.server_api import ServerApi
 import json
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # MongoDB connection string
-MONGODB_URL = "mongodb+srv://manoharmeesala6179:xw9momNJ0YaAocFF@personalfundmanager.y4hlu4o.mongodb.net/?retryWrites=true&w=majority&appName=PersonalFundManager"
+MONGODB_URL = os.getenv("MONGODB_URL")
+if not MONGODB_URL:
+    raise ValueError("MONGODB_URL environment variable is not set")
 
 # Create MongoDB client
 client = AsyncIOMotorClient(MONGODB_URL, server_api=ServerApi('1'))
