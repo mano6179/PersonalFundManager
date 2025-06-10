@@ -15,6 +15,8 @@ const LoggerForm = () => {
     // Weekly Profit fields
     profit: '',
     charges: '',
+    funds_in_out: '0',  // Add this
+    previous_nav: '',   // Add this
 
     // IV Tracker fields
     symbol: '',
@@ -48,28 +50,17 @@ const LoggerForm = () => {
   const fetchLogs = async () => {
     try {
       setLogsLoading(true);
-
-      // Get logs from localStorage or use default mock data if none exists
-      const storedLogs = localStorage.getItem('steadyGainsLogs');
-
-      if (storedLogs) {
-        setLogs(JSON.parse(storedLogs));
-      } else {
-        // Initial mock data
-        const mockLogs = [
-          { id: 1, type: 'weekly_profit', timestamp: '2023-06-01T10:00:00', profit: 5000, charges: 200, funds_in_out: 0 },
-          { id: 2, type: 'iv_tracker', timestamp: '2023-06-02T11:30:00', symbol: 'NIFTY', strike: 18500, expiry: '2023-06-29', iv: 15.5 },
-          { id: 3, type: 'trade', timestamp: '2023-06-03T14:15:00', symbol: 'BANKNIFTY', strategy: 'Iron Condor', entry_exit: 'entry', quantity: 25, premium: 1200 },
-          { id: 4, type: 'market_update', timestamp: '2023-06-04T09:00:00', title: 'Market Opening Update', content: 'Markets opened flat with mixed global cues.' },
-          { id: 5, type: 'weekly_profit', timestamp: '2023-06-08T16:30:00', profit: 7500, charges: 300, funds_in_out: 10000 },
-        ];
-
-        // Save initial data to localStorage
-        localStorage.setItem('steadyGainsLogs', JSON.stringify(mockLogs));
-        setLogs(mockLogs);
+      const response = await fetch('http://localhost:8000/api/logs');
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch logs');
       }
+
+      const data = await response.json();
+      setLogs(data);
     } catch (err) {
       console.error('Error fetching logs:', err);
+      setError('Failed to fetch logs');
     } finally {
       setLogsLoading(false);
     }
@@ -81,6 +72,8 @@ const LoggerForm = () => {
       // Weekly Profit fields
       profit: '',
       charges: '',
+      funds_in_out: '0',  // Add this
+      previous_nav: '',   // Add this
 
       // IV Tracker fields
       symbol: '',
@@ -117,10 +110,8 @@ const LoggerForm = () => {
     setLoading(true);
 
     try {
-      // Prepare data based on log type
       const timestamp = `${date}T${time}:00`;
       let newLog = {
-        id: Date.now(), // Use timestamp as unique ID
         type: logType,
         timestamp
       };
@@ -131,7 +122,8 @@ const LoggerForm = () => {
             ...newLog,
             profit: parseFloat(formData.profit),
             charges: parseFloat(formData.charges),
-            funds_in_out: 0
+            funds_in_out: parseFloat(formData.funds_in_out || 0),
+            previous_nav: parseFloat(formData.previous_nav)
           };
           break;
 
@@ -170,46 +162,33 @@ const LoggerForm = () => {
           throw new Error('Invalid log type');
       }
 
-      // For demo purposes, we'll log the new entry
-      console.log("New log entry:", newLog);
+      // Send to backend API
+      const response = await fetch('http://localhost:8000/api/logs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newLog)
+      });
 
-      // Get existing logs from localStorage
-      const existingLogsJSON = localStorage.getItem('steadyGainsLogs');
-      const existingLogs = existingLogsJSON ? JSON.parse(existingLogsJSON) : [];
-
-      // Add new log to the beginning of the array
-      const updatedLogs = [newLog, ...existingLogs];
-
-      // Save updated logs to localStorage
-      localStorage.setItem('steadyGainsLogs', JSON.stringify(updatedLogs));
-
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      setSuccess(`${getLogTypeLabel(logType)} logged successfully!`);
-
-      // Reset form fields
-      if (logType === 'weekly_profit') {
-        setFormData(prev => ({ ...prev, profit: '', charges: '' }));
-      } else if (logType === 'iv_tracker') {
-        setFormData(prev => ({ ...prev, symbol: '', strike: '', expiry: '', iv: '' }));
-      } else if (logType === 'trade') {
-        setFormData(prev => ({
-          ...prev,
-          symbol: '',
-          strategy: '',
-          entry_exit: 'entry',
-          quantity: '',
-          premium: '',
-          trade_date: new Date().toISOString().split('T')[0],
-          notes: ''
-        }));
-      } else if (logType === 'market_update') {
-        setFormData(prev => ({ ...prev, title: '', content: '' }));
+      if (!response.ok) {
+        throw new Error('Failed to submit log');
       }
 
-      // Refresh the logs
-      setLogs(updatedLogs);
+      // Update local state with new data
+      const result = await response.json();
+      setLogs(prevLogs => [result, ...prevLogs]);
+      setSuccess(`${getLogTypeLabel(logType)} logged successfully!`);
+      
+      // Reset form
+      setFormData({
+        profit: '',
+        charges: '',
+        funds_in_out: '0',
+        previous_nav: '',
+        // ... other fields reset
+      });
+
     } catch (err) {
       console.error('Error submitting log:', err);
       setError('Failed to submit log. ' + (err.message || 'Unknown error'));
@@ -289,13 +268,13 @@ const LoggerForm = () => {
         return (
           <>
             <Input
-              label="Profit"
+              label="Realized P&L"
               type="number"
               step="0.01"
               name="profit"
               value={formData.profit}
               onChange={handleInputChange}
-              placeholder="Enter profit amount"
+              placeholder="Enter profit/loss amount"
               required
             />
 
@@ -307,6 +286,27 @@ const LoggerForm = () => {
               value={formData.charges}
               onChange={handleInputChange}
               placeholder="Enter charges amount"
+              required
+            />
+
+            <Input
+              label="Funds In/Out"
+              type="number"
+              step="0.01"
+              name="funds_in_out"
+              value={formData.funds_in_out}
+              onChange={handleInputChange}
+              placeholder="Enter funds (positive for inflow, negative for outflow)"
+            />
+
+            <Input
+              label="Previous NAV"
+              type="number"
+              step="0.01"
+              name="previous_nav"
+              value={formData.previous_nav}
+              onChange={handleInputChange}
+              placeholder="Enter previous NAV value"
               required
             />
           </>

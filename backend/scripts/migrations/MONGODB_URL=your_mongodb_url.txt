@@ -1,0 +1,3 @@
+MONGODB_URL=your_mongodb_url
+BACKUP_DIR=backups
+BACKUP_RETENTION_DAYS=7

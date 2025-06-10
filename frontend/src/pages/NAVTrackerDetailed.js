@@ -3,6 +3,8 @@ import { useTheme } from '../context/ThemeContext';
 import NAVGraph from '../components/NAVGraph';
 import NAVDataTable from '../components/NAVDataTable';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
 const NAVTrackerDetailed = () => {
   const { isDarkMode } = useTheme();
   const [summaryData, setSummaryData] = useState({
@@ -17,7 +19,7 @@ const NAVTrackerDetailed = () => {
   useEffect(() => {
     const fetchSummaryData = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/nav/history');
+        const response = await fetch(`${API_URL}/api/nav/history`);
         if (!response.ok) {
           throw new Error('Failed to fetch NAV data');
         }

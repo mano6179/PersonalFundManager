@@ -16,12 +16,26 @@ import ZerodhaPage from './pages/ZerodhaPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import ZerodhaAuthSuccess from './pages/ZerodhaAuthSuccess';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <Router>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<LandingPage />} />

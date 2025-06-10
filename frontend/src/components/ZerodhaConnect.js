@@ -23,37 +23,35 @@ const ZerodhaConnect = () => {
 
   // Handle the redirect from Zerodha with request_token
   useEffect(() => {
+    const handleRequestToken = async (requestToken) => {
+      try {
+        setLoading(true);
+        setError('');
+        
+        const response = await axios.get(`${API_URL}/api/zerodha/callback?request_token=${requestToken}`);
+        
+        if (response.data && response.data.access_token) {
+          const token = response.data.access_token;
+          setAccessToken(token);
+          localStorage.setItem('zerodhaAccessToken', token);
+          setIsConnected(true);
+          // Fetch data with the new token
+          fetchZerodhaData(token);
+        }
+      } catch (err) {
+        console.error('Error handling request token:', err);
+        setError('Failed to authenticate with Zerodha. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const urlParams = new URLSearchParams(window.location.search);
     const requestToken = urlParams.get('request_token');
-    
     if (requestToken) {
       handleRequestToken(requestToken);
     }
-  }, [handleRequestToken]);
-
-  const handleRequestToken = async (requestToken) => {
-    try {
-      setLoading(true);
-      setError('');
-      
-      const response = await axios.get(`${API_URL}/api/zerodha/callback?request_token=${requestToken}`);
-      
-      if (response.data && response.data.access_token) {
-        const token = response.data.access_token;
-        setAccessToken(token);
-        localStorage.setItem('zerodhaAccessToken', token);
-        setIsConnected(true);
-        
-        // Fetch data with the new token
-        fetchZerodhaData(token);
-      }
-    } catch (err) {
-      console.error('Error handling request token:', err);
-      setError('Failed to authenticate with Zerodha. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, []);
 
   const fetchZerodhaData = async (token) => {
     try {
@@ -94,8 +92,23 @@ const ZerodhaConnect = () => {
   };
 
   const handleConnect = () => {
-    window.location.href = `${API_URL}/api/zerodha/login`;
+    window.open(`${API_URL}/api/zerodha/login`, '_blank', 'width=600,height=700');
   };
+  // Listen for popup auth success
+  useEffect(() => {
+    const handleMessage = (event) => {
+      if (event.data?.type === 'ZERODHA_AUTH_SUCCESS') {
+        const token = localStorage.getItem('zerodhaAccessToken');
+        if (token) {
+          setAccessToken(token);
+          setIsConnected(true);
+          fetchZerodhaData(token);
+        }
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   const handleDisconnect = async () => {
     try {
