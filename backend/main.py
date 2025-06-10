@@ -10,12 +10,17 @@ import logging
 import asyncio
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
-# Set up logging
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Load environment variables
+load_dotenv()
+logger.info("Environment variables loaded")
+
+# Log environment variables (without sensitive data)
+logger.info(f"DATABASE_NAME: {os.getenv('DATABASE_NAME', 'Not set')}")
+logger.info(f"MONGODB_URL: {'Set' if os.getenv('MONGODB_URL') else 'Not set'}")
 
 # Verify environment variables
 if not os.getenv("MONGODB_URL"):

@@ -5,15 +5,21 @@ from dotenv import load_dotenv
 import logging
 from typing import Optional
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Load environment variables
 load_dotenv()
 
 # MongoDB connection settings
 MONGODB_URL = os.getenv("MONGODB_URL")
+logger.info(f"MONGODB_URL is {'set' if MONGODB_URL else 'not set'}")
 if not MONGODB_URL:
     raise ValueError("MONGODB_URL environment variable is not set")
 
 DATABASE_NAME = os.getenv("DATABASE_NAME", "PersonalFundManager")
+logger.info(f"Using database: {DATABASE_NAME}")
 
 # Initialize MongoDB client
 client: Optional[AsyncIOMotorClient] = None
@@ -33,6 +39,7 @@ async def init_db():
     
     try:
         # Initialize MongoDB client with server API version
+        logger.info("Attempting to connect to MongoDB...")
         client = AsyncIOMotorClient(MONGODB_URL, server_api=ServerApi('1'))
         
         # Get database reference
@@ -48,14 +55,14 @@ async def init_db():
         
         # Verify connection
         await client.admin.command('ping')
-        logging.info(f"Successfully connected to MongoDB Atlas - Database: {DATABASE_NAME}")
+        logger.info(f"Successfully connected to MongoDB Atlas - Database: {DATABASE_NAME}")
         
         # Log available collections
         collections = await db.list_collection_names()
-        logging.info(f"Available collections: {collections}")
+        logger.info(f"Available collections: {collections}")
         
     except Exception as e:
-        logging.error(f"Failed to connect to MongoDB Atlas: {str(e)}")
+        logger.error(f"Failed to connect to MongoDB Atlas: {str(e)}")
         raise
 
 async def get_database():
