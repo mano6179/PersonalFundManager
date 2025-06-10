@@ -56,11 +56,16 @@ async def shutdown_db_client():
 
 # Get frontend URL from environment variable or use localhost for development
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+logger.info(f"Frontend URL: {FRONTEND_URL}")
 
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL, "http://localhost:3000"],  # Frontend URLs
+    allow_origins=[
+        FRONTEND_URL,
+        "http://localhost:3000",
+        "https://personal-fund-manager-web.onrender.com"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

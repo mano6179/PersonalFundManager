@@ -1,1 +1,22 @@
- 
+services:
+  - type: web
+    name: personal-fund-manager-api
+    env: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: MONGODB_URL
+        sync: false
+      - key: DATABASE_NAME
+        value: PersonalFundManager
+      - key: FRONTEND_URL
+        value: https://personal-fund-manager-web.onrender.com
+
+  - type: web
+    name: personal-fund-manager-web
+    env: node
+    buildCommand: cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://personal-fund-manager-api.onrender.com 
