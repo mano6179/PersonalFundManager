@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, Dict
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from bson import ObjectId
 
 class UserPreferences(BaseModel):
@@ -10,7 +10,7 @@ class UserPreferences(BaseModel):
 
 class User(BaseModel):
     id: Optional[str] = Field(default_factory=lambda: str(ObjectId()))
-    email: str
+    email: EmailStr
     password: str  # Will be hashed
     name: str
     role: str = "user"  # user, admin
@@ -38,12 +38,12 @@ class User(BaseModel):
         }
 
 class UserCreate(BaseModel):
-    email: str
+    email: EmailStr
     password: str
     name: str
 
 class UserLogin(BaseModel):
-    email: str
+    email: EmailStr
     password: str
 
 class Token(BaseModel):
@@ -52,5 +52,5 @@ class Token(BaseModel):
     refresh_token: str
 
 class TokenData(BaseModel):
-    email: Optional[str] = None
+    email: Optional[EmailStr] = None
     user_id: Optional[str] = None
